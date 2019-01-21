@@ -16,7 +16,7 @@ class UserRequest extends FormRequest
     {
         return true;
     }
-    
+
     public function rules()
     {
         return [
