@@ -6,14 +6,17 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class Model extends EloquentModel
 {
-    public function scopeRecent($query)
+
+    public function scopeUpdatedAtDesc($query)
     {
-        return $query->orderBy('id', 'desc');
+        // 此时会自动触发框架对数据模型 updated_at 时间戳的更新
+        return $query->orderBy('updated_at', 'desc');
     }
 
-    public function scopeOrdered($query)
+    public function scopeCreatedAtDesc($query)
     {
-        return $query->orderBy('order', 'desc');
+        // 按照创建时间排序
+        return $query->orderBy('created_at', 'desc');
     }
 
 }
