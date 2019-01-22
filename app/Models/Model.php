@@ -19,4 +19,9 @@ class Model extends EloquentModel
         return $query->orderBy('created_at', 'desc');
     }
 
+    public function scopeRecent($query)
+    {
+        return $query->orderBy('id', 'desc');
+    }
+
 }
