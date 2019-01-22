@@ -4,6 +4,6 @@
       由 <a href="http://weibo.com/u/1837553744?is_hot=1" target="_blank">Ivan</a> 设计和编码 <span style="color: #e27575;font-size: 14px;">❤</span>
     </p>
 
-    <p class="float-right"><a href="mailto:1095036273@qq.com">联系Ivan</a></p>
+    <p class="float-right"><a href="mailto:{{ setting('contact_email') }}">联系Ivan</a></p>
   </div>
 </footer>
