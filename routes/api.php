@@ -16,24 +16,31 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
-    'namespace' => 'App\Http\Controllers\Api',
-    'middleware' =>  ['serializer:array', 'bindings']
-], function($api) {
-
+    'namespace'  => 'App\Http\Controllers\Api',
+    'middleware' => ['serializer:array', 'bindings']
+], function ($api) {
     $api->group([
         'middleware' => 'api.throttle',
-        'limit' => config('api.rate_limits.access.limit'),
-        'expires' => config('api.rate_limits.access.expires'),
+        'limit'      => config('api.rate_limits.access.limit'),
+        'expires'    => config('api.rate_limits.access.expires'),
     ], function ($api) {
-            // 游客可以访问的接口
-            $api->get('categories', 'CategoriesController@index')
-                ->name('api.categories.index');
-            $api->get('topics', 'TopicsController@index')
-                ->name('api.topics.index');
-            $api->get('users/{user}/topics', 'TopicsController@userIndex')
-                ->name('api.users.topics.index');
+        // 游客可以访问的接口
+        $api->get('categories', 'CategoriesController@index')
+            ->name('api.categories.index');
+        $api->get('topics', 'TopicsController@index')
+            ->name('api.topics.index');
+        $api->get('users/{user}/topics', 'TopicsController@userIndex')
+            ->name('api.users.topics.index');
+        $api->get('topics/{topic}', 'TopicsController@show')
+            ->name('api.topics.show');
+        // 话题回复列表
+        $api->get('topics/{topic}/replies', 'RepliesController@index')
+            ->name('api.topics.replies.index');
+        // 某个用户的回复列表
+        $api->get('users/{user}/replies', 'RepliesController@userIndex')
+            ->name('api.users.replies.index');
         // 需要 token 验证的接口
-        $api->group(['middleware' => 'api.auth'], function($api) {
+        $api->group(['middleware' => 'api.auth'], function ($api) {
             // 当前登录用户信息
             $api->get('user', 'UsersController@me')
                 ->name('api.user.show');
@@ -51,16 +58,29 @@ $api->version('v1', [
                 ->name('api.topics.update');
             $api->delete('topics/{topic}', 'TopicsController@destroy')
                 ->name('api.topics.destroy');
+            // 发布回复
+            $api->post('topics/{topic}/replies', 'RepliesController@store')
+                ->name('api.topics.replies.store');
+            // 删除回复
+            $api->delete('topics/{topic}/replies/{reply}', 'RepliesController@destroy')
+                ->name('api.topics.replies.destroy');
+            // 通知列表
+            $api->get('user/notifications', 'NotificationsController@index')
+                ->name('api.user.notifications.index');
+            // 通知统计
+            $api->get('user/notifications/stats', 'NotificationsController@stats')
+                ->name('api.user.notifications.stats');
+            // 标记消息通知为已读
+            $api->patch('user/read/notifications', 'NotificationsController@read')
+                ->name('api.user.notifications.read');
         });
-
-
     });
 
     $api->group([
         'middleware' => 'api.throttle',
-        'limit' => config('api.rate_limits.sign.limit'),
-        'expires' => config('api.rate_limits.sign.expires'),
-    ], function($api) {
+        'limit'      => config('api.rate_limits.sign.limit'),
+        'expires'    => config('api.rate_limits.sign.expires'),
+    ], function ($api) {
         // 短信验证码
         $api->post('verificationCodes', 'VerificationCodesController@store')
             ->name('api.verificationCodes.store');
